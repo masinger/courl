@@ -10,7 +10,8 @@ type Host struct {
 }
 
 type OAuth struct {
-	ClientId     string `yaml:"clientId"`
-	ClientSecret string `yaml:"clientSecret"`
-	TokenUrl     string `yaml:"tokenUrl"`
+	ClientId      string `yaml:"clientId"`
+	ClientSecret  string `yaml:"clientSecret"`
+	TokenUrl      string `yaml:"tokenUrl"`
+	DeviceAuthUrl string `yaml:"deviceAuthUrl"`
 }
