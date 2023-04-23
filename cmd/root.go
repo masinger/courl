@@ -50,18 +50,24 @@ to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		url := args[0]
 		var err error
-		tokenSource := authConfig.TokenSource(context.Background())
+		tokenSource, err := authConfig.TokenSource(context.Background(), nil)
+		if err != nil {
+			return err
+		}
 		if tokenSource == nil {
 			cfg, err := config.ReadDefault()
 			if err != nil {
 				return err
 			}
-			err = cfg.Apply(&authConfig, url)
+			host, err := cfg.Apply(&authConfig, url)
 			if err != nil {
 				return err
 			}
-			tokenSource = authConfig.TokenSource(context.Background())
 
+			tokenSource, err = config.WrapTokenSource(host, context.Background(), authConfig.TokenSource)
+			if err != nil {
+				return err
+			}
 		}
 
 		client, err := clientConfig.Create(tokenSource)
@@ -89,7 +95,7 @@ func Execute() {
 
 func init() {
 	// Auth
-	rootCmd.PersistentFlags().StringVar(&authConfig.TokenURL, "token-url", "", "Set the token url.")
+	rootCmd.PersistentFlags().StringVar(&authConfig.TokenUrl, "token-url", "", "Set the token url.")
 	rootCmd.PersistentFlags().StringVar(&authConfig.ClientID, "client-id", "", "Set the client id.")
 	rootCmd.PersistentFlags().StringVar(&authConfig.ClientSecret, "client-secret", "", "Set the client secret.")
 

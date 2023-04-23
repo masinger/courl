@@ -8,6 +8,7 @@ import (
 type tokenSourceProvider func(
 	c Config,
 	ctx context.Context,
-) oauth2.TokenSource
+	token *oauth2.Token,
+) (oauth2.TokenSource, error)
 
 var tokenSourceProviders = []tokenSourceProvider{}

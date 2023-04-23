@@ -8,18 +8,17 @@ import (
 )
 
 func init() {
-	tokenSourceProviders = append(tokenSourceProviders, func(c Config, ctx context.Context) oauth2.TokenSource {
-		if !util.AllStringsPresent(&c.TokenURL, &c.ClientID, &c.ClientSecret) {
-			return nil
+	tokenSourceProviders = append(tokenSourceProviders, func(c Config, ctx context.Context, _ *oauth2.Token) (oauth2.TokenSource, error) {
+		if !util.AllStringsPresent(&c.TokenUrl, &c.ClientID, &c.ClientSecret) {
+			return nil, nil
 		}
 
 		clientConfig := clientcredentials.Config{
-			TokenURL:     c.TokenURL,
+			TokenURL:     c.TokenUrl,
 			ClientID:     c.ClientID,
 			ClientSecret: c.ClientSecret,
 			Scopes:       c.Scopes,
 		}
-
-		return clientConfig.TokenSource(ctx)
+		return clientConfig.TokenSource(ctx), nil
 	})
 }
